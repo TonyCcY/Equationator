@@ -1,0 +1,12 @@
+{
+  "name": "equationator",
+  "version": "1.0.0",
+  "description": "A web-based math game for kids",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+} 

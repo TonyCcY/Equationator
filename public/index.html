@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Equationator</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Start Page (Configuration) -->
+        <div id="startPage" class="page">
+            <h1>Equationator</h1>
+            <form id="configForm" class="config-form">
+                <div class="form-group">
+                    <label>How Many Digits? 🔢</label>
+                    <div class="toggle-group" id="digitLevel">
+                        <button type="button" class="toggle-btn active" data-value="1">
+                            <span class="toggle-title">One Digit</span>
+                            <span class="toggle-desc">Numbers from 1 to 9</span>
+                        </button>
+                        <button type="button" class="toggle-btn" data-value="2">
+                            <span class="toggle-title">Two Digits</span>
+                            <span class="toggle-desc">Numbers from 10 to 99</span>
+                        </button>
+                        <button type="button" class="toggle-btn" data-value="3">
+                            <span class="toggle-title">Three Digits</span>
+                            <span class="toggle-desc">Numbers from 100 to 999</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="paramCount">Number of Numbers 📊</label>
+                    <input type="number" id="paramCount" min="2" max="5" value="2" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Math Operations 🧮</label>
+                    <div class="operators">
+                        <label>
+                            <input type="checkbox" id="addOp" checked>
+                            <span>Addition ➕</span>
+                        </label>
+                        <label>
+                            <input type="checkbox" id="subOp">
+                            <span>Subtraction ➖</span>
+                        </label>
+                        <label>
+                            <input type="checkbox" id="mulOp">
+                            <span>Multiplication ✖️</span>
+                        </label>
+                        <label>
+                            <input type="checkbox" id="divOp">
+                            <span>Division ➗</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="questionCount">Number of Questions ❓</label>
+                    <input type="number" id="questionCount" min="1" max="20" value="10" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Display Format 📝</label>
+                    <div class="toggle-group" id="displayFormat">
+                        <button type="button" class="toggle-btn active" data-value="horizontal">
+                            <span class="toggle-title">Horizontal</span>
+                            <span class="toggle-desc">125 + 378 =</span>
+                        </button>
+                        <button type="button" class="toggle-btn" data-value="vertical">
+                            <span class="toggle-title">Vertical</span>
+                            <span class="toggle-desc">Stacked numbers</span>
+                        </button>
+                        <button type="button" class="toggle-btn" data-value="both">
+                            <span class="toggle-title">Both</span>
+                            <span class="toggle-desc">Show horizontal and vertical</span>
+                        </button>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-primary start-btn">Let's Play! 🎮</button>
+            </form>
+        </div>
+
+        <!-- Game Page -->
+        <div id="gamePage" class="page hidden">
+            <h1>Equationator</h1>
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+            <div class="progress-text" id="progressText"></div>
+            <div class="question-container">
+                <div id="equation" class="equation"></div>
+                <div id="choices" class="choices"></div>
+            </div>
+            <div id="feedback" class="feedback hidden"></div>
+        </div>
+
+        <!-- Results Page -->
+        <div id="resultsPage" class="page hidden">
+            <h1>Equationator Results</h1>
+            <div id="summary" class="summary"></div>
+            <div id="questionList" class="question-list"></div>
+            <button id="playAgain" class="btn-primary">Play Again</button>
+        </div>
+    </div>
+
+    <script src="/js/utils.js"></script>
+    <script src="/js/game.js"></script>
+</body>
+</html> 
