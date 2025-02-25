@@ -7,8 +7,8 @@ const port = 3000;
 app.use(express.static('public'));
 
 // Serve vendor files correctly
-app.use('/vendor/core-js/minified.js', express.static(path.join(__dirname, 'node_modules/core-js-bundle/minified.js')));
-app.use('/vendor/mathjax', express.static(path.join(__dirname, 'node_modules/mathjax/es5')));
+// app.use('/vendor/core-js/minified.js', express.static(path.join(__dirname, 'node_modules/core-js-bundle/minified.js')));
+// app.use('/vendor/mathjax', express.static(path.join(__dirname, 'node_modules/mathjax/es5')));
 
 // Set proper MIME types
 app.use((req, res, next) => {
