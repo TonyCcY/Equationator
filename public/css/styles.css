@@ -125,11 +125,21 @@ select {
     background-color: #43A047;
 }
 
-/* Game page styles update */
+/* Game page styles */
+#gamePage {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+#gamePage > * {
+    width: 100%;
+    max-width: 800px;  /* Consistent max-width for all elements */
+}
+
 .equation {
     width: 100%;
-    max-width: 800px;
-    margin: 0 auto;
     padding: 30px;
     background-color: white;
     border-radius: var(--border-radius);
@@ -138,6 +148,7 @@ select {
     text-align: center;
     min-height: 150px;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
 }
@@ -151,73 +162,96 @@ select {
     min-height: auto;
 }
 
-/* Update MathJax container in equation */
-.equation > mjx-container {
-    margin: 0 auto !important;
-    padding: 0 !important;
+/* Progress and Timer Container */
+.progress-timer-container {
+    width: 100%;
+    margin: 0 auto;
+    background: white;
+    padding: 20px;
+    border-radius: var(--border-radius);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border: 3px solid var(--secondary-color);
 }
 
-/* Ensure proper spacing for division notation */
-.equation mjx-container[jax="CHTML"][display="true"] {
-    margin: 0 auto !important;
-    padding: 0 !important;
+.progress-info {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 15px;
+    position: relative;
 }
 
-/* Update question container spacing */
+.progress-text {
+    font-size: 1.5em;
+    color: var(--secondary-color);
+    font-weight: bold;
+    text-align: center;
+}
+
+.timer {
+    font-size: 1.5em;
+    color: var(--primary-color);
+    font-weight: bold;
+    padding: 8px 15px;
+    background-color: var(--background-color);
+    border-radius: var(--border-radius);
+    border: 2px solid var(--primary-color);
+    position: absolute;
+    right: 0;
+}
+
+.progress-container {
+    width: 100%;
+    background-color: #eee;
+    border-radius: 10px;
+    overflow: hidden;
+    height: 25px;
+    border: 2px solid var(--secondary-color);
+}
+
+.progress-bar {
+    height: 100%;
+    background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+    transition: width 0.3s ease;
+    border-radius: 6px;
+}
+
+/* Question container */
 .question-container {
-    flex: 1;
+    width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    width: 100%;
     gap: 30px;
     padding: 20px 0;
 }
 
-.equation .number {
-    padding: 0 5px;
-}
-
-.equation .operator {
-    padding: 0 10px;
-}
-
-/* Vertical equation styles */
-.equation.stacked {
+/* Add styles for both format display */
+.equation-container {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 0;
+    margin: 0 auto;
     position: relative;
-    padding: 30px 40px;
 }
 
-.equation.stacked .number {
-    display: block;
-    text-align: right;
-    margin-left: 1em;
-    padding: 5px 0;
+.equation-container .equation {
+    flex: 1;
+    max-width: calc(50% - 1px);
+    margin: 0;
+    min-width: 0;
+    position: relative;
+    padding-top: 4rem;  /* Add space for the title */
 }
 
-.equation.stacked .operator {
-    position: absolute;
-    left: 25px;
-    padding: 5px 0;
-}
-
-.equation.stacked .equals {
-    display: block;
-    margin-left: 1em;
-    margin-top: 5px;
-    border-top: 2px solid #333;
-    text-align: right;
-    padding-top: 5px;
-}
-
-/* Choice buttons update */
+/* Choice buttons */
 .choices {
+    width: 100%;
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 15px;
-    width: 100%;
-    max-width: 800px;
     margin: 0 auto;
 }
 
@@ -255,69 +289,9 @@ select {
     color: white;
 }
 
-/* Progress and Timer Container */
-.progress-timer-container {
-    width: 100%;
-    max-width: 800px;
-    margin: 0 auto 20px;
-    background: white;
-    padding: 20px;
-    border-radius: var(--border-radius);
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    border: 3px solid var(--secondary-color);
-}
-
-.progress-container {
-    width: 100%;
-    background-color: #eee;
-    border-radius: 10px;
-    overflow: hidden;
-    height: 25px;
-    border: 2px solid var(--secondary-color);
-}
-
-.progress-bar {
-    height: 100%;
-    background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
-    transition: width 0.3s ease;
-    border-radius: 6px;
-}
-
-.progress-info {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 15px;
-    position: relative;
-}
-
-.progress-text {
-    font-size: 1.4em;
-    color: var(--text-color);
-    text-align: center;
-    font-weight: bold;
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-}
-
-.timer {
-    font-size: 1.4em;
-    color: var(--secondary-color);
-    font-weight: bold;
-    font-family: monospace;
-    background: #f0f7ff;
-    padding: 8px 20px;
-    border-radius: 20px;
-    border: 2px solid var(--secondary-color);
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    margin-left: auto;
-}
-
-/* Feedback message update */
+/* Feedback message */
 .feedback {
     width: 100%;
-    max-width: 800px;
     margin: 10px auto;
     padding: 15px;
     font-size: 2em;
@@ -339,6 +313,45 @@ select {
 
 .feedback.wrong {
     background-color: var(--error-color);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    #gamePage > * {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+
+    .progress-timer-container {
+        margin-bottom: 15px;
+    }
+
+    .question-container {
+        gap: 20px;
+    }
+
+    .choices {
+        grid-template-columns: 1fr;
+    }
+
+    .choice-btn {
+        min-height: 80px;
+        padding: 15px;
+        font-size: 3em;
+    }
+}
+
+@media (max-width: 480px) {
+    #gamePage > * {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    .choice-btn {
+        min-height: 70px;
+        padding: 10px;
+        font-size: 2.5em;
+    }
 }
 
 /* Results page update */
@@ -475,47 +488,6 @@ select {
     }
 }
 
-/* Responsive design update */
-@media (max-width: 768px) {
-    .container {
-        padding: 10px;
-    }
-
-    .question-container {
-        padding: 10px 0;
-    }
-
-    .equation {
-        padding: 20px;
-        min-height: 120px;
-    }
-
-    .choices {
-        grid-template-columns: 1fr;
-        gap: 10px;
-    }
-
-    .choice-btn {
-        min-height: 80px;
-        padding: 15px;
-        font-size: 3em;
-    }
-}
-
-/* Extra small devices */
-@media (max-width: 480px) {
-    .equation {
-        padding: 15px;
-        min-height: 100px;
-    }
-
-    .choice-btn {
-        min-height: 70px;
-        padding: 10px;
-        font-size: 2.5em;
-    }
-}
-
 /* Utility classes */
 .hidden {
     display: none !important;
@@ -523,18 +495,6 @@ select {
 
 .page {
     width: 100%;
-}
-
-/* Add to center elements */
-.question-container {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    gap: 20px;
-    padding: 20px 0;
 }
 
 /* Toggle group styles */
@@ -595,27 +555,69 @@ select {
     }
 }
 
-/* Add styles for both format display */
-.equation-container {
-    width: 100%;
-    max-width: 800px;
-    gap: 20px;
-    margin: 0 auto;
+/* Remove old divider */
+.equation-container .equation:first-child {
+    margin-right: 0;
+    padding-right: 0;
+    border-right: none;
 }
 
-.equation-container .equation {
-    margin: 0;
+/* Add new divider element */
+.format-divider {
+    width: 2px;
+    background-color: var(--secondary-color);
+    margin: 0 40px;
+    align-self: stretch;
 }
 
-/* Add a divider between formats */
-.equation-container .equation:first-child::after {
-    content: "and";
+/* Update titles for each format */
+.equation-container .equation::before {
+    content: attr(data-format);
     display: block;
     text-align: center;
-    font-size: 1rem;
+    font-size: 1.2rem;
     color: var(--text-color);
-    margin-top: 20px;
     font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    background-color: white;
+    padding: 5px 15px;
+    border: 2px solid var(--secondary-color);
+    border-radius: var(--border-radius);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    width: calc(100% - 30px);  /* Account for padding */
+    margin: 0 auto;
+    transform: none;
+}
+
+/* Responsive design for equation container */
+@media (max-width: 768px) {
+    .equation-container {
+        flex-direction: column;
+        gap: 40px;
+        padding-top: 0;
+    }
+    
+    .equation-container .equation {
+        max-width: 100%;
+        padding-top: 2.5rem;  /* Slightly more space on mobile */
+    }
+
+    /* Update divider for mobile */
+    .format-divider {
+        width: 100%;
+        height: 2px;
+        margin: 0;
+    }
+
+    /* Update title positioning for mobile */
+    .equation-container .equation::before {
+        top: 0;
+        width: calc(100% - 30px);
+        margin: 0 auto;
+    }
 }
 
 /* Update start button styles */

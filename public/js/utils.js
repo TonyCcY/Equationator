@@ -93,13 +93,40 @@ function formatEquation(numbers, operator, format) {
         '/': '\\div'
     };
 
-    // For multiplication with 2 numbers, always show horizontal
-    if (operator === '*' && numbers.length === 2 && format !== 'vertical') {
-        return `
-            <div class="equation">
-                \\[${numbers[0]} ${operatorMap[operator]} ${numbers[1]} = \\space ?\\]
-            </div>
-        `;
+    // For multiplication with 2 numbers, handle both format
+    if (operator === '*' && numbers.length === 2) {
+        if (format === 'both') {
+            const horizontalTeX = `${numbers[0]} ${operatorMap[operator]} ${numbers[1]} = \\space ?`;
+            const verticalTeX = numbers.map(n => n.toString().padStart(8)).join(`\\\\ ${operatorMap[operator]} `) + '\\\\ \\hline \\space ?';
+            
+            return `
+                <div class="equation-container">
+                    <div class="equation" data-format="Horizontal">
+                        \\[${horizontalTeX}\\]
+                    </div>
+                    <div class="format-divider"></div>
+                    <div class="equation" data-format="Vertical">
+                        \\[\\begin{align*}${verticalTeX}\\end{align*}\\]
+                    </div>
+                </div>
+            `;
+        } else if (format === 'vertical') {
+            return `
+                <div class="equation">
+                    \\[\\begin{align*}
+                    ${numbers.map(n => n.toString().padStart(8)).join(`\\\\ ${operatorMap[operator]} `)}
+                    \\\\ \\hline
+                    \\space ?
+                    \\end{align*}\\]
+                </div>
+            `;
+        } else {
+            return `
+                <div class="equation">
+                    \\[${numbers[0]} ${operatorMap[operator]} ${numbers[1]} = \\space ?\\]
+                </div>
+            `;
+        }
     }
 
     // For division, handle vertical format specially
@@ -112,10 +139,11 @@ function formatEquation(numbers, operator, format) {
             if (format === 'both') {
                 return `
                     <div class="equation-container">
-                        <div class="equation">
+                        <div class="equation" data-format="Horizontal">
                             \\[${numbers[0]} ${operatorMap[operator]} ${numbers[1]} = \\space ?\\]
                         </div>
-                        <div class="equation">
+                        <div class="format-divider"></div>
+                        <div class="equation" data-format="Vertical">
                             ${verticalDivision}
                         </div>
                     </div>
@@ -143,8 +171,13 @@ function formatEquation(numbers, operator, format) {
         
         return `
             <div class="equation-container">
-                <div class="equation">\\[${horizontalTeX}\\]</div>
-                <div class="equation">\\[\\begin{align*}${verticalTeX}\\end{align*}\\]</div>
+                <div class="equation" data-format="Horizontal">
+                    \\[${horizontalTeX}\\]
+                </div>
+                <div class="format-divider"></div>
+                <div class="equation" data-format="Vertical">
+                    \\[\\begin{align*}${verticalTeX}\\end{align*}\\]
+                </div>
             </div>
         `;
     }

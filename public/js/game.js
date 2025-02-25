@@ -159,9 +159,7 @@ function initGame(config) {
         gameState.questions.push({
             ...equation,
             choices,
-            format: config.displayFormat === 'both' ? 
-                (Math.random() < 0.5 ? 'horizontal' : 'vertical') :
-                config.displayFormat
+            format: config.displayFormat
         });
     }
 
@@ -416,9 +414,7 @@ configForm.addEventListener('submit', (e) => {
                     gameState.questions.push({
                         ...equation,
                         choices,
-                        format: displayFormat === 'both' ? 
-                            (Math.random() < 0.5 ? 'horizontal' : 'vertical') :
-                            displayFormat
+                        format: displayFormat
                     });
                     currentQuestionCount++;
                 } catch (error) {
