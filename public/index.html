@@ -1,11 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Equationator</title>
     <link rel="stylesheet" href="/css/styles.css">
+    <script src="/vendor/core-js/minified.js"></script>
+    <script id="MathJax-script" async src="/vendor/mathjax/tex-mml-chtml.js"></script>
 </head>
+
 <body>
     <div class="container">
         <!-- Start Page (Configuration) -->
@@ -15,17 +19,17 @@
                 <div class="form-group">
                     <label>How Many Digits? 🔢</label>
                     <div class="toggle-group" id="digitLevel">
-                        <button type="button" class="toggle-btn active" data-value="1">
-                            <span class="toggle-title">One Digit</span>
-                            <span class="toggle-desc">Numbers from 1 to 9</span>
-                        </button>
-                        <button type="button" class="toggle-btn" data-value="2">
+                        <button type="button" class="toggle-btn active" data-value="2">
                             <span class="toggle-title">Two Digits</span>
-                            <span class="toggle-desc">Numbers from 10 to 99</span>
+                            <span class="toggle-desc">Numbers from 1 to 99</span>
                         </button>
                         <button type="button" class="toggle-btn" data-value="3">
                             <span class="toggle-title">Three Digits</span>
-                            <span class="toggle-desc">Numbers from 100 to 999</span>
+                            <span class="toggle-desc">Numbers from 1 to 999</span>
+                        </button>
+                        <button type="button" class="toggle-btn" data-value="4">
+                            <span class="toggle-title">Four Digits</span>
+                            <span class="toggle-desc">Numbers from 1 to 9999</span>
                         </button>
                     </div>
                 </div>
@@ -59,7 +63,7 @@
 
                 <div class="form-group">
                     <label for="questionCount">Number of Questions ❓</label>
-                    <input type="number" id="questionCount" min="1" max="20" value="10" required>
+                    <input type="number" id="questionCount" min="1" max="100" value="10" required>
                 </div>
 
                 <div class="form-group">
@@ -87,10 +91,15 @@
         <!-- Game Page -->
         <div id="gamePage" class="page hidden">
             <h1>Equationator</h1>
-            <div class="progress-container">
-                <div class="progress-bar" id="progressBar"></div>
+            <div class="progress-timer-container">
+                <div class="progress-info">
+                    <div class="progress-text" id="progressText">Question 1 of 10</div>
+                    <div class="timer" id="timer">00:00</div>
+                </div>
+                <div class="progress-container">
+                    <div class="progress-bar" id="progressBar" style="width: 0%"></div>
+                </div>
             </div>
-            <div class="progress-text" id="progressText"></div>
             <div class="question-container">
                 <div id="equation" class="equation"></div>
                 <div id="choices" class="choices"></div>
@@ -110,4 +119,5 @@
     <script src="/js/utils.js"></script>
     <script src="/js/game.js"></script>
 </body>
-</html> 
+
+</html>

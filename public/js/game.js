@@ -4,7 +4,10 @@ let gameState = {
     questions: [],
     currentQuestionIndex: 0,
     answers: [],
-    startTime: null
+    startTime: null,
+    questionHistory: new Set(),
+    timer: null,
+    elapsedTime: 0
 };
 
 // DOM elements
@@ -22,33 +25,40 @@ const playAgainButton = document.getElementById('playAgain');
 // Load saved settings from localStorage
 function loadSavedSettings() {
     try {
-        // Load digit level
+        // Load digit level and adjust max questions accordingly
         const savedDigitLevel = localStorage.getItem('digitLevel');
         if (savedDigitLevel) {
             document.querySelectorAll('#digitLevel .toggle-btn').forEach(btn => {
-                btn.classList.toggle('active', btn.dataset.value === savedDigitLevel);
+                if (btn.dataset.value === savedDigitLevel) {
+                    btn.classList.add('active');
+                    // Set max questions based on digit level
+                    const questionCountInput = document.getElementById('questionCount');
+                    questionCountInput.max = savedDigitLevel === '2' ? '100' : '150';
+                } else {
+                    btn.classList.remove('active');
+                }
             });
         }
 
-        // Load param count
+        // Load other settings as before
         const savedParamCount = localStorage.getItem('paramCount');
         if (savedParamCount) {
             document.getElementById('paramCount').value = savedParamCount;
         }
 
-        // Load operators
         const savedOperators = JSON.parse(localStorage.getItem('operators') || '["addOp"]');
         ['addOp', 'subOp', 'mulOp', 'divOp'].forEach(op => {
             document.getElementById(op).checked = savedOperators.includes(op);
         });
 
-        // Load question count
         const savedQuestionCount = localStorage.getItem('questionCount');
         if (savedQuestionCount) {
-            document.getElementById('questionCount').value = savedQuestionCount;
+            const questionCountInput = document.getElementById('questionCount');
+            // Ensure saved question count doesn't exceed current max
+            const maxQuestions = document.querySelector('#digitLevel .toggle-btn.active').dataset.value === '2' ? 100 : 150;
+            questionCountInput.value = Math.min(parseInt(savedQuestionCount), maxQuestions);
         }
 
-        // Load display format
         const savedDisplayFormat = localStorage.getItem('displayFormat');
         if (savedDisplayFormat) {
             document.querySelectorAll('#displayFormat .toggle-btn').forEach(btn => {
@@ -78,21 +88,69 @@ function saveSettings(config) {
     }
 }
 
+// Format time function
+function formatTime(seconds) {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+}
+
+// Start timer function
+function startTimer() {
+    gameState.startTime = Date.now();
+    gameState.elapsedTime = 0;
+    
+    // Update timer every second
+    gameState.timer = setInterval(() => {
+        gameState.elapsedTime = Math.floor((Date.now() - gameState.startTime) / 1000);
+        document.getElementById('timer').textContent = formatTime(gameState.elapsedTime);
+    }, 1000);
+}
+
+// Stop timer function
+function stopTimer() {
+    if (gameState.timer) {
+        clearInterval(gameState.timer);
+        gameState.timer = null;
+    }
+}
+
 // Initialize game
 function initGame(config) {
     gameState.config = config;
     gameState.questions = [];
     gameState.currentQuestionIndex = 0;
     gameState.answers = [];
-    gameState.startTime = Date.now();
+    gameState.questionHistory = new Set();
 
     // Generate questions
     for (let i = 0; i < config.questionCount; i++) {
-        const equation = generateEquation({
-            digitLevel: config.digitLevel,
-            paramCount: config.paramCount,
-            operator: config.operator
-        });
+        let equation;
+        let questionKey;
+        let attempts = 0;
+        const MAX_ATTEMPTS = 20;
+
+        // Keep trying until we get a unique question or reach max attempts
+        do {
+            equation = generateEquation({
+                digitLevel: config.digitLevel,
+                paramCount: config.paramCount,
+                operator: config.operator
+            });
+            
+            // Create a unique key for this question
+            questionKey = `${equation.numbers.join(',')}${equation.operator}`;
+            attempts++;
+
+            // If we've tried too many times, clear history and accept any valid question
+            if (attempts >= MAX_ATTEMPTS) {
+                gameState.questionHistory.clear();
+                break;
+            }
+        } while (gameState.questionHistory.has(questionKey));
+
+        // Add this question to history
+        gameState.questionHistory.add(questionKey);
         
         const wrongAnswers = generateWrongAnswers(equation.result, equation.operator);
         const choices = [...wrongAnswers, equation.result]
@@ -106,6 +164,25 @@ function initGame(config) {
                 config.displayFormat
         });
     }
+
+    // Update HTML structure for progress and timer
+    const progressTimerContainer = document.createElement('div');
+    progressTimerContainer.className = 'progress-timer-container';
+    progressTimerContainer.innerHTML = `
+        <div class="progress-info">
+            <div class="progress-text" id="progressText">Question 1 of ${config.questionCount}</div>
+            <div class="timer" id="timer">00:00</div>
+        </div>
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar" style="width: 0%"></div>
+        </div>
+    `;
+
+    // Insert progress timer container at the top of the game page
+    gamePage.insertBefore(progressTimerContainer, gamePage.firstChild);
+
+    // Start the timer
+    startTimer();
 
     showQuestion();
 }
@@ -127,18 +204,24 @@ function showQuestion() {
         question.format
     );
 
-    // Display choices
-    choicesDisplay.innerHTML = question.choices
-        .map(choice => `
-            <button class="choice-btn" data-value="${choice}">
-                ${choice}
-            </button>
-        `).join('');
-
-    // Add click handlers to buttons
-    const buttons = choicesDisplay.querySelectorAll('.choice-btn');
-    buttons.forEach(button => {
-        button.addEventListener('click', () => handleAnswer(parseInt(button.dataset.value)));
+    // Refresh MathJax rendering
+    MathJax.typesetPromise().then(() => {
+        // Display choices after equation is rendered
+        choicesDisplay.innerHTML = question.choices
+            .map(choice => `
+                <button class="choice-btn" data-value="${choice}">
+                    ${choice}
+                </button>
+            `).join('');
+        
+        // Refresh MathJax for choices
+        MathJax.typesetPromise().then(() => {
+            // Add click handlers to buttons
+            const buttons = choicesDisplay.querySelectorAll('.choice-btn');
+            buttons.forEach(button => {
+                button.addEventListener('click', () => handleAnswer(parseInt(button.dataset.value)));
+            });
+        });
     });
 
     // Hide feedback
@@ -185,6 +268,9 @@ function handleAnswer(selectedAnswer) {
 
 // Show results page
 function showResults() {
+    // Stop the timer
+    stopTimer();
+
     gamePage.classList.add('hidden');
     resultsPage.classList.remove('hidden');
 
@@ -192,22 +278,41 @@ function showResults() {
     const totalQuestions = gameState.questions.length;
     const percentage = Math.round((correctCount / totalQuestions) * 100);
 
+    // Use the elapsed time from the timer
+    const timeString = formatTime(gameState.elapsedTime);
+
     // Show summary
     summary.innerHTML = `
         <h2>Score: ${correctCount}/${totalQuestions} (${percentage}%)</h2>
-        <p>Time taken: ${Math.round((Date.now() - gameState.startTime) / 1000)} seconds</p>
+        <p>Time taken: ${timeString}</p>
     `;
 
-    // Show question list
-    questionList.innerHTML = gameState.answers.map((answer, index) => `
-        <div class="question-item">
-            <p>${formatEquation(gameState.questions[index].numbers, gameState.questions[index].operator, gameState.questions[index].format).replace(/\n/g, '<br>')}</p>
-            <p>Your answer: ${answer.selected}</p>
-            ${!answer.correct ? 
-                `<p>Correct answer: ${gameState.questions[index].result}</p>` : ''}
-            <p>${answer.correct ? '✔ Correct' : '✘ Wrong'}</p>
-        </div>
-    `).join('');
+    // Show question list with horizontal format only
+    questionList.innerHTML = gameState.answers.map((answer, index) => {
+        const question = gameState.questions[index];
+        const equationStr = formatEquation(question.numbers, question.operator, 'horizontal');
+        return `
+            <div class="question-item">
+                <div class="equation-wrapper">
+                    ${equationStr}
+                </div>
+                <div class="answers-grid">
+                    <p>Your answer:</p>
+                    <p>${answer.selected}</p>
+                    ${!answer.correct ? `
+                        <p>Correct answer:</p>
+                        <p>${question.result}</p>
+                    ` : ''}
+                </div>
+                <div class="status ${answer.correct ? 'correct' : 'wrong'}">
+                    ${answer.correct ? '✔ Correct' : '✘ Wrong'}
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    // Refresh MathJax rendering
+    MathJax.typesetPromise();
 }
 
 // Event Listeners
@@ -227,7 +332,7 @@ configForm.addEventListener('submit', (e) => {
     };
 
     // Get all selected operators
-    const selectedOperators = Object.entries(operators)
+    let selectedOperators = Object.entries(operators)
         .filter(([id]) => document.getElementById(id).checked)
         .map(([, symbol]) => symbol);
     
@@ -236,46 +341,112 @@ configForm.addEventListener('submit', (e) => {
         return;
     }
 
-    const config = {
+    const paramCount = parseInt(document.getElementById('paramCount').value);
+    const questionCount = parseInt(document.getElementById('questionCount').value);
+
+    // Validate division with param count
+    if (selectedOperators.includes('/') && paramCount !== 2) {
+        alert('Division is only supported with 2 numbers. Please adjust your settings.');
+        return;
+    }
+
+    // Initialize game state
+    gameState.config = {
         digitLevel: digitLevel,
-        paramCount: parseInt(document.getElementById('paramCount').value),
-        operator: selectedOperators[Math.floor(Math.random() * selectedOperators.length)],
-        questionCount: parseInt(document.getElementById('questionCount').value),
+        paramCount: paramCount,
+        questionCount: questionCount,
         displayFormat: displayFormat
     };
-
-    // Save settings before starting the game
-    saveSettings(config);
-
-    // Generate new questions with different operators
-    gameState.config = config;
     gameState.questions = [];
     gameState.currentQuestionIndex = 0;
     gameState.answers = [];
-    gameState.startTime = Date.now();
+    gameState.questionHistory = new Set();
 
-    // Generate questions with random operators from selection
-    for (let i = 0; i < config.questionCount; i++) {
-        const questionOperator = selectedOperators[Math.floor(Math.random() * selectedOperators.length)];
-        const equation = generateEquation({
-            digitLevel: config.digitLevel,
-            paramCount: config.paramCount,
-            operator: questionOperator
-        });
-        
-        const wrongAnswers = generateWrongAnswers(equation.result, questionOperator);
-        const choices = [...wrongAnswers, equation.result]
-            .sort(() => Math.random() - 0.5);
+    // Save settings
+    saveSettings(gameState.config);
 
-        gameState.questions.push({
-            ...equation,
-            choices,
-            format: config.displayFormat // Use the format directly without random selection
-        });
+    // Distribute questions among selected operators
+    const questionsPerOperator = Math.floor(questionCount / selectedOperators.length);
+    const remainingQuestions = questionCount % selectedOperators.length;
+    let currentQuestionCount = 0;
+
+    // Generate questions for each operator
+    for (const operator of selectedOperators) {
+        // Calculate how many questions for this operator
+        const operatorQuestionCount = operator === selectedOperators[0] ? 
+            questionsPerOperator + remainingQuestions : questionsPerOperator;
+
+        for (let i = 0; i < operatorQuestionCount && currentQuestionCount < questionCount; i++) {
+            let equation = null;
+            let attempts = 0;
+            const MAX_ATTEMPTS = 5;
+
+            // Try to generate a valid equation
+            while (attempts < MAX_ATTEMPTS && !equation) {
+                try {
+                    equation = generateEquation({
+                        digitLevel: digitLevel,
+                        paramCount: operator === '/' ? 2 : paramCount,
+                        operator: operator
+                    });
+
+                    // Create unique key for this question
+                    const questionKey = `${equation.numbers.join(',')}${operator}`;
+
+                    // Check if this question is unique
+                    if (gameState.questionHistory.has(questionKey)) {
+                        equation = null; // Try again if duplicate
+                    } else {
+                        gameState.questionHistory.add(questionKey);
+                    }
+                } catch (error) {
+                    console.error(`Error generating ${operator} equation:`, error);
+                    equation = null;
+                }
+                attempts++;
+            }
+
+            // If we got a valid equation, add it to questions
+            if (equation) {
+                try {
+                    const wrongAnswers = generateWrongAnswers(equation.result, operator);
+                    const choices = [...wrongAnswers, equation.result]
+                        .sort(() => Math.random() - 0.5);
+
+                    gameState.questions.push({
+                        ...equation,
+                        choices,
+                        format: displayFormat === 'both' ? 
+                            (Math.random() < 0.5 ? 'horizontal' : 'vertical') :
+                            displayFormat
+                    });
+                    currentQuestionCount++;
+                } catch (error) {
+                    console.error('Error generating choices:', error);
+                }
+            }
+        }
+    }
+
+    // If we couldn't generate enough questions, show error
+    if (gameState.questions.length < questionCount / 2) {
+        alert('Unable to generate enough valid questions. Please try different settings.');
+        return;
+    }
+
+    // Shuffle the questions to mix operators
+    for (let i = gameState.questions.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [gameState.questions[i], gameState.questions[j]] = 
+        [gameState.questions[j], gameState.questions[i]];
     }
 
     startPage.classList.add('hidden');
     gamePage.classList.remove('hidden');
+    
+    // Start the timer before showing the first question
+    startTimer();
+    
     showQuestion();
 });
 
@@ -316,6 +487,33 @@ document.querySelectorAll('.operators input[type="checkbox"]').forEach(checkbox 
         const selectedOperators = ['addOp', 'subOp', 'mulOp', 'divOp']
             .filter(op => document.getElementById(op).checked);
         localStorage.setItem('operators', JSON.stringify(selectedOperators));
+    });
+});
+
+// Add handlers for digit level selection
+document.querySelectorAll('#digitLevel .toggle-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        const digitLevel = btn.dataset.value;
+        const questionCountInput = document.getElementById('questionCount');
+        
+        // Adjust max questions based on digit level
+        if (digitLevel === '2') {
+            questionCountInput.max = '100';
+            // If current value is higher than new max, adjust it
+            if (parseInt(questionCountInput.value) > 100) {
+                questionCountInput.value = '100';
+            }
+        } else {
+            questionCountInput.max = '150';
+        }
+        
+        // Update active state
+        btn.parentElement.querySelectorAll('.toggle-btn').forEach(b => 
+            b.classList.toggle('active', b === btn)
+        );
+        
+        // Save the setting
+        localStorage.setItem('digitLevel', digitLevel);
     });
 });
 

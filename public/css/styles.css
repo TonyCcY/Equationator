@@ -28,6 +28,9 @@ body {
     max-width: 1000px;
     margin: 0 auto;
     padding: 20px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
 
 h1 {
@@ -124,16 +127,52 @@ select {
 
 /* Game page styles update */
 .equation {
-    font-size: 2.5em;
-    font-family: 'Courier New', monospace;
-    margin: 30px auto;
-    padding: 30px 40px;
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 30px;
     background-color: white;
     border-radius: var(--border-radius);
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     border: 3px solid var(--secondary-color);
-    display: inline-block;
     text-align: center;
+    min-height: 150px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Remove nested equation styles */
+.equation .equation {
+    border: none;
+    box-shadow: none;
+    padding: 0;
+    margin: 0;
+    min-height: auto;
+}
+
+/* Update MathJax container in equation */
+.equation > mjx-container {
+    margin: 0 auto !important;
+    padding: 0 !important;
+}
+
+/* Ensure proper spacing for division notation */
+.equation mjx-container[jax="CHTML"][display="true"] {
+    margin: 0 auto !important;
+    padding: 0 !important;
+}
+
+/* Update question container spacing */
+.question-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    gap: 30px;
+    padding: 20px 0;
 }
 
 .equation .number {
@@ -176,21 +215,26 @@ select {
 .choices {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 20px;
-    margin: 30px 0;
+    gap: 15px;
     width: 100%;
-    max-width: 600px;
+    max-width: 800px;
+    margin: 0 auto;
 }
 
 .choice-btn {
-    font-size: 1.8em;
+    width: 100%;
+    min-height: 100px;
     padding: 20px;
+    font-size: 3.8em;
     background-color: white;
     border: 3px solid var(--secondary-color);
     border-radius: var(--border-radius);
     cursor: pointer;
     transition: all 0.3s ease;
     font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .choice-btn:hover:not(:disabled) {
@@ -211,39 +255,77 @@ select {
     color: white;
 }
 
-/* Progress bar update */
+/* Progress and Timer Container */
+.progress-timer-container {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto 20px;
+    background: white;
+    padding: 20px;
+    border-radius: var(--border-radius);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border: 3px solid var(--secondary-color);
+}
+
 .progress-container {
     width: 100%;
-    height: 30px;
-    background-color: #e0e0e0;
-    border-radius: 15px;
-    margin: 20px 0;
+    background-color: #eee;
+    border-radius: 10px;
     overflow: hidden;
-    border: 3px solid var(--secondary-color);
+    height: 25px;
+    border: 2px solid var(--secondary-color);
 }
 
 .progress-bar {
     height: 100%;
-    background-color: var(--primary-color);
+    background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
     transition: width 0.3s ease;
+    border-radius: 6px;
+}
+
+.progress-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    position: relative;
 }
 
 .progress-text {
+    font-size: 1.4em;
+    color: var(--text-color);
     text-align: center;
-    margin-bottom: 15px;
+    font-weight: bold;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.timer {
     font-size: 1.4em;
     color: var(--secondary-color);
+    font-weight: bold;
+    font-family: monospace;
+    background: #f0f7ff;
+    padding: 8px 20px;
+    border-radius: 20px;
+    border: 2px solid var(--secondary-color);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-left: auto;
 }
 
 /* Feedback message update */
 .feedback {
+    width: 100%;
+    max-width: 800px;
+    margin: 10px auto;
+    padding: 15px;
     font-size: 2em;
-    margin: 20px 0;
-    padding: 20px;
     border-radius: var(--border-radius);
     animation: bounce 0.5s;
     text-align: center;
     color: white;
+    font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
 }
 
 @keyframes bounce {
@@ -267,6 +349,9 @@ select {
     margin-bottom: 30px;
     text-align: center;
     font-size: 1.5em;
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto 30px;
 }
 
 .summary h2 {
@@ -274,20 +359,120 @@ select {
     margin-bottom: 20px;
 }
 
+#playAgain {
+    width: 100%;
+    max-width: 800px;
+    font-size: 2em;
+    padding: 20px;
+    margin: 30px auto;
+    background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+    border: none;
+    color: white;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    display: block;
+}
+
+#playAgain:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+    background: linear-gradient(45deg, var(--secondary-color), var(--primary-color));
+}
+
+#playAgain:active {
+    transform: translateY(1px);
+}
+
 .question-list {
     background: white;
-    padding: 30px;
+    padding: 20px;
     border-radius: var(--border-radius);
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    max-height: 70vh;
+    overflow-y: auto;
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
 }
 
 .question-item {
-    padding: 20px;
-    border-bottom: 2px solid #eee;
-    font-size: 1.2em;
+    padding: 15px;
+    border: 1px solid #eee;
+    border-radius: var(--border-radius);
+    background: #f9f9f9;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
 }
 
-.question-item:last-child {
-    border-bottom: none;
+.question-item .equation-wrapper {
+    margin-bottom: 10px;
+    width: 100%;
+    text-align: center;
+}
+
+.question-item .equation-wrapper .MathJax {
+    font-size: 1.5em !important;
+}
+
+.question-item .answers-grid {
+    display: grid;
+    grid-template-columns: auto auto;
+    gap: 8px;
+    width: 100%;
+    align-items: center;
+    margin: 8px 0;
+}
+
+.question-item .answers-grid p {
+    margin: 0;
+    padding: 6px;
+    background: #fff;
+    border-radius: 6px;
+    text-align: center;
+    font-size: 1em;
+}
+
+.question-item .answers-grid p:nth-child(odd) {
+    font-weight: bold;
+    color: var(--secondary-color);
+}
+
+.question-item .answers-grid p:nth-child(even) {
+    font-weight: normal;
+}
+
+.question-item .status {
+    display: inline-block;
+    padding: 6px 15px;
+    border-radius: 20px;
+    font-size: 1.1em;
+    margin-top: 12px;
+    color: white;
+    text-align: center;
+}
+
+.question-item .status.correct {
+    background: linear-gradient(45deg, var(--success-color), #45a049);
+}
+
+.question-item .status.wrong {
+    background: linear-gradient(45deg, var(--error-color), #ff1744);
+}
+
+/* Responsive design for results */
+@media (max-width: 768px) {
+    .question-list {
+        grid-template-columns: 1fr;
+        padding: 15px;
+        gap: 15px;
+    }
 }
 
 /* Responsive design update */
@@ -296,21 +481,38 @@ select {
         padding: 10px;
     }
 
-    .choices {
-        grid-template-columns: 1fr;
+    .question-container {
+        padding: 10px 0;
     }
 
     .equation {
-        font-size: 2em;
         padding: 20px;
+        min-height: 120px;
     }
 
-    .operators {
-        grid-align: center;
+    .choices {
+        grid-template-columns: 1fr;
+        gap: 10px;
     }
 
     .choice-btn {
-        font-size: 1.5em;
+        min-height: 80px;
+        padding: 15px;
+        font-size: 3em;
+    }
+}
+
+/* Extra small devices */
+@media (max-width: 480px) {
+    .equation {
+        padding: 15px;
+        min-height: 100px;
+    }
+
+    .choice-btn {
+        min-height: 70px;
+        padding: 10px;
+        font-size: 2.5em;
     }
 }
 
@@ -325,10 +527,14 @@ select {
 
 /* Add to center elements */
 .question-container {
+    flex: 1;
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
     width: 100%;
+    gap: 20px;
+    padding: 20px 0;
 }
 
 /* Toggle group styles */
@@ -391,13 +597,12 @@ select {
 
 /* Add styles for both format display */
 .equation-container {
-    display: flex;
-    flex-direction: column;
-    gap: 30px;
-    align-items: center;
+    width: 100%;
+    max-width: 800px;
+    gap: 20px;
+    margin: 0 auto;
 }
 
-/* Update the equation margin for both format */
 .equation-container .equation {
     margin: 0;
 }
@@ -411,17 +616,6 @@ select {
     color: var(--text-color);
     margin-top: 20px;
     font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
-}
-
-/* Update responsive design */
-@media (max-width: 768px) {
-    .equation-container {
-        gap: 20px;
-    }
-
-    .equation-container .equation {
-        font-size: 1.8em;
-    }
 }
 
 /* Update start button styles */
@@ -453,4 +647,158 @@ select {
 /* Update operator styles */
 .operators label span {
     font-size: 1.2em;
-} 
+}
+
+/* MathJax container styles */
+.MathJax {
+    font-size: 6.0em !important;
+    font-family: 'Comic Sans MS', 'Chalkboard SE', cursive !important;
+    margin: 0 auto !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+}
+
+/* Game page specific styles */
+/* #gamePage .equation .MathJax {
+    font-size: 2.5em !important;
+    min-width: 200px !important;
+} */
+
+/* Choice button MathJax */
+/* .choice-btn .MathJax {
+    font-size: 2em !important;
+    pointer-events: none;
+    width: 100% !important;
+} */
+
+/* Update vertical division styles */
+/* .equation mjx-container[jax="CHTML"][display="true"] {
+    margin: 15px auto !important;
+    min-width: 250px !important;
+    display: flex !important;
+    justify-content: center !important;
+}
+
+.equation mjx-container[jax="CHTML"][display="true"] mjx-math {
+    max-width: 100%;
+    padding: 10px 0;
+    text-align: center !important;
+} */
+
+/* Ensure MathJax containers don't overflow and align properly */
+mjx-container {
+    overflow: visible !important;
+    max-width: 100% !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+}
+
+/* mjx-math {
+    font-family: 'Comic Sans MS', 'Chalkboard SE', cursive !important;
+    padding: 0 10px;
+    text-align: center !important;
+} */
+
+/* Specific styles for division notation */
+mjx-container[jax="CHTML"][display="true"] mjx-mfrac {
+    text-align: center !important;
+    display: flex !important;
+    justify-content: center !important;
+    padding: 0.5em 0 !important;
+}
+
+mjx-container[jax="CHTML"][display="true"] mjx-num {
+    text-align: center !important;
+}
+
+mjx-container[jax="CHTML"][display="true"] mjx-den {
+    text-align: center !important;
+}
+
+/* Center MathJax content in buttons */
+.choice-btn mjx-container {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    width: 100% !important;
+    height: 100% !important;
+}
+
+.choice-btn mjx-math {
+    text-align: center !important;
+}
+
+/* Update responsive styles */
+@media (max-width: 768px) {
+    .equation mjx-container {
+        min-width: 150px !important;
+    }
+
+    #gamePage .equation .MathJax {
+        font-size: 2em !important;
+    }
+
+    .choice-btn .MathJax {
+        font-size: 1.6em !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .equation mjx-container {
+        min-width: 120px !important;
+    }
+
+    #gamePage .equation .MathJax {
+        font-size: 1.8em !important;
+    }
+
+    .choice-btn .MathJax {
+        font-size: 1.4em !important;
+    }
+}
+
+/* Add specific styles for division problems */
+mjx-container[jax="CHTML"][display="true"] mjx-enclose {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    margin: 0 auto !important;
+    position: relative !important;
+}
+
+mjx-container[jax="CHTML"][display="true"] mjx-box {
+    text-align: center !important;
+    margin: 0 auto !important;
+}
+
+/* Essential MathJax styles for division */
+mjx-container {
+    overflow: visible !important;
+    max-width: 100% !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+}
+
+mjx-container[jax="CHTML"][display="true"] mjx-enclose {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    margin: 0 auto !important;
+    position: relative !important;
+}
+
+/* Responsive font sizes */
+@media (max-width: 768px) {
+    .MathJax {
+        font-size: 4em !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .MathJax {
+        font-size: 3em !important;
+    }
+}
