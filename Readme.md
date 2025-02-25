@@ -2,22 +2,36 @@
 
 A fun and interactive math game for kids to practice arithmetic operations. Built with vanilla JavaScript, HTML, and CSS.
 
-[Live Demo](https://github.com/TonyCcY/Equationator)
-
 ## Features 🌟
 
 - Multiple difficulty levels (1-3 digits)
 - Various arithmetic operations (➕, ➖, ✖️, ➗)
 - Configurable number of operands (2-5 numbers)
 - Flexible display formats (horizontal, vertical, or both)
-- Progress tracking
-- Immediate feedback
+- Real-time progress tracking with visual progress bar
+- Timer display in MM:SS format
+- Immediate feedback on answers
 - End-game summary with detailed results
 - Settings persistence across sessions
 
-## Demo 🎮
+## Game Interface 🎮
 
-![Equationator Demo](demo.gif)
+- **Progress Tracking**:
+  - Visual progress bar showing completion status
+  - Current question number display
+  - Timer showing elapsed time in MM:SS format
+
+- **Question Display**:
+  - Clean, readable equation presentation
+  - Multiple choice answers
+  - Immediate visual feedback
+  - Support for both horizontal and vertical formats
+
+- **Results Summary**:
+  - Total score and percentage
+  - Time taken to complete
+  - Detailed review of all questions
+  - Option to play again
 
 ## Installation 🚀
 
@@ -60,10 +74,11 @@ A fun and interactive math game for kids to practice arithmetic operations. Buil
 ## Technologies Used 💻
 
 - HTML5
-- CSS3
+- CSS3 (with modern features like Flexbox and Grid)
 - JavaScript (ES6+)
 - Express.js
 - Local Storage API
+- MathJax for equation rendering
 
 ## Features in Detail 📝
 
@@ -74,14 +89,20 @@ A fun and interactive math game for kids to practice arithmetic operations. Buil
 
 ### Math Operations
 - Addition (➕)
-- Subtraction (➖)
+- Subtraction (➖) with non-negative results
 - Multiplication (✖️)
-- Division (➗)
+- Division (➗) with whole number results
 
 ### Display Formats
 - Horizontal: Traditional left-to-right format
 - Vertical: Stacked number format
-- Both: Shows both formats simultaneously
+- Both: Random alternation between formats
+
+### Progress Tracking
+- Visual progress bar with gradient fill
+- Current question counter
+- Timer display in MM:SS format
+- Persistent game state
 
 ## Game Logic 🎲
 
@@ -95,9 +116,9 @@ A fun and interactive math game for kids to practice arithmetic operations. Buil
    - Three plausible wrong answers
    - Random positioning of options
 
-3. **Scoring**
+3. **Scoring and Timing**
    - Tracks correct/incorrect answers
-   - Calculates completion time
+   - Measures completion time
    - Provides detailed review of all questions
 
 ## Local Storage 💾
@@ -126,3 +147,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - Font: Comic Sans MS for kid-friendly interface
 - Icons: Emoji icons for intuitive understanding
 - Color Scheme: Bright, engaging colors suitable for children
+- MathJax: For beautiful mathematical equation rendering
