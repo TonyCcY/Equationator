@@ -804,3 +804,55 @@ mjx-container[jax="CHTML"][display="true"] mjx-enclose {
         font-size: 3em !important;
     }
 }
+
+/* GitHub button styles */
+.github-link {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    text-decoration: none;
+}
+
+.github-button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    font-size: 1em;
+    color: white;
+    background: var(--text-color);
+    border: none;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    font-family: 'Comic Sans MS', 'Chalkboard SE', cursive;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.github-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    background: #000;
+}
+
+.github-button svg {
+    transition: transform 0.3s ease;
+}
+
+.github-button:hover svg {
+    transform: rotate(360deg);
+}
+
+/* Responsive design for GitHub button */
+@media (max-width: 768px) {
+    .github-button {
+        padding: 8px 12px;
+        font-size: 0.9em;
+    }
+    
+    .github-button svg {
+        height: 16px;
+        width: 16px;
+    }
+}

@@ -2,6 +2,8 @@
 
 A fun and interactive math game for kids to practice arithmetic operations. Built with vanilla JavaScript, HTML, and CSS.
 
+🎮 **[Try the Demo](https://equationator.vercel.app/)**
+
 ## Features 🌟
 
 - Multiple difficulty levels (1-3 digits)
